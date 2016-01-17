@@ -25,7 +25,7 @@ del data # free up the memory
 print('loaded training data')
 
 # Construct k-nearest neighbor classifier and 'fit' it
-kNeigh = KNeighborsClassifier(n_jobs=-1) # use all the CPU cores in parallel!
+kNeigh = KNeighborsClassifier(n_neighbors=5, n_jobs=1, algorithm='kd_tree') # use all the CPU cores in parallel!
 kNeigh.fit(X, y)
 
 # Read the test data

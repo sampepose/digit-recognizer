@@ -35,7 +35,7 @@ print('predicted test data')
 
 # write predictions to csv
 with open('data/out-my-nearest-neighbor.csv', 'w') as writer:
-    writer.write('"ImageId", "Label"\n')
+    writer.write('"ImageId", Label\n')
     count = 0
     for p in predict:
         count += 1
