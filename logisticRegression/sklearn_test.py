@@ -8,7 +8,7 @@ from sklearn.grid_search import GridSearchCV
 class RUN_TYPE:
     hyperparams, validate, test = range(3)
     
-runType = RUN_TYPE.validate    
+runType = RUN_TYPE.test    
     
 def find_hyperparams(lr, X, y):
     # Set the parameters by cross-validation
@@ -68,7 +68,7 @@ else:
         
         # write predictions to csv
         with open('out/out-sklearn.csv', 'w') as writer:
-            writer.write('"ImageId", Label\n')
+            writer.write('"ImageId",Label\n')
             count = 0
             for p in predict:
                 count += 1

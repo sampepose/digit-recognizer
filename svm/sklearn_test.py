@@ -71,7 +71,7 @@ else:
         
         # write predictions to csv
         with open('out/out-sklearn.csv', 'w') as writer:
-            writer.write('"ImageId", Label\n')
+            writer.write('"ImageId",Label\n')
             count = 0
             for p in predict:
                 count += 1
