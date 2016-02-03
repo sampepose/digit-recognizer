@@ -34,10 +34,10 @@ class LogisticRegression:
         log_prob = log_softmax(X_theta)
         
         cost = (-1.0 / M) * np.sum(self.binary_labels * log_prob)
-        cost += (0.5 / self.C) * np.sum(theta * theta)
+        cost += 0.5 * (1.0 / self.C) * (1.0 / M) * np.sum(theta ** 2)
         
         grad = (-1.0 / M) * X.T.dot(self.binary_labels - prob)
-        grad += (1.0 / self.C) * theta
+        grad += (1.0 / self.C) * (1.0 / M) * theta
 
         return cost, grad.flatten()
         
