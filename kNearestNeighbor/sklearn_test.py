@@ -6,46 +6,23 @@ Created on Thu Jan 14 09:43:42 2016
 """
 
 import csv
+import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import fetch_mldata
 
-data = []
-TestData = []
+mnist = fetch_mldata("MNIST original")
+print('Fetched data')
 
-# Read the training data
-f = open('data/train.csv')
-reader = csv.reader(f)
-next(reader, None)
-for row in reader:
-    data.append(row)
-f.close()
-        
-X = [x[1:] for x in data]
-y = [x[0] for x in data]
-del data # free up the memory
-print('loaded training data')
+# use the traditional train/test split
+X, y = mnist.data, mnist.target
+X_train, X_test = X[:60000], X[60000:]
+y_train, y_test = y[:60000], y[60000:]
 
 # Construct k-nearest neighbor classifier and 'fit' it
-kNeigh = KNeighborsClassifier(n_neighbors=5, n_jobs=1, algorithm='kd_tree') # use all the CPU cores in parallel!
-kNeigh.fit(X, y)
+kNeigh = KNeighborsClassifier(n_neighbors=5, n_jobs=-1, algorithm='kd_tree') # use all the CPU cores in parallel!
+kNeigh.fit(X_train, y_train)
+print('Trained classifier')
 
-# Read the test data
-f = open('data/test.csv')
-reader = csv.reader(f)
-next(reader, None)
-for row in reader:
-    TestData.append(row)
-f.close()
-print('loaded test data')
-        
 # predict the test data
-predict = kNeigh.predict(TestData)
-del TestData # free up the memory
-print('predicted test data')
-
-# write predictions to csv
-with open('data/out-sklearn-nearest-neighbor.csv.csv', 'w') as writer:
-    writer.write('"ImageId", "Label"\n')
-    count = 0
-    for p in predict:
-        count += 1
-        writer.write(str(count) + ',"' + str(p) + '"\n')
+prediction = kNeigh.score(X_test, y_test)
+print('accuracy: ' + prediction)
