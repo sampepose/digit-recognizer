@@ -24,7 +24,7 @@ correct = 0.0
 count = len(y_test)
 accuracy = 0.0
 for i, p in enumerate(predict):
-	if p == y_test[i]
+	if p == y_test[i]:
 		correct += 1
 
 print('accuracy:', float(correct) / count)

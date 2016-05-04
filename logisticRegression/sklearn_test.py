@@ -4,6 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from numpy.random import RandomState
 from sklearn.cross_validation import train_test_split
 from sklearn.grid_search import GridSearchCV
+from sklearn.datasets import fetch_mldata
 
 class RUN_TYPE:
     hyperparams, validate, test = range(3)
@@ -17,27 +18,21 @@ def find_hyperparams(lr, X, y):
     grid.fit(X, y)
     return grid.best_estimator_
 
-# Read the training data
-f = open('../data/train.csv')
-reader = csv.reader(f)
-next(reader, None) # skip header
-data = [data for data in reader]
-f.close()
-        
-X = np.asarray([x[1:] for x in data], dtype=np.int16)
-y = np.asarray([x[0] for x in data], dtype=np.int16)
 
-X = np.true_divide(X, 255); # normalize image data to 0-1
+mnist = fetch_mldata("MNIST original")
+print('Fetched data')
 
-del data # free up the memory
-print('loaded training data')
+# use the traditional train/test split
+X, y = mnist.data / 255.0, mnist.target
+X_train, X_test = X[:60000], X[60000:]
+y_train, y_test = y[:60000], y[60000:]
 
 RS = RandomState() 
 
 if runType == RUN_TYPE.hyperparams:
     # use less data or the process will outlive us    
-    X = X[1:1500, :]
-    y = y[1:1500]
+    X = X_train[1:1500, :]
+    y = y_train[1:1500]
 
     lr = LogisticRegression(random_state=RS, solver='lbfgs', multi_class='multinomial', n_jobs=-1)
     print(find_hyperparams(lr, X, y))
@@ -48,28 +43,11 @@ else:
     lr = LogisticRegression(C=C, random_state=RS, solver='lbfgs', multi_class='multinomial', n_jobs=-1)    
     
     if runType == RUN_TYPE.validate:
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=RandomState())
         lr.fit(X_train, y_train)
         print('Score of {}'.format(lr.score(X_test, y_test)))
     else:
-        lr.fit(X, y)
+        lr.fit(X_train, y_train)
+            
+        acc = lr.score(X_test, y_test)
         
-        # Read the test data
-        f = open('../data/test.csv')
-        reader = csv.reader(f)
-        next(reader, None) # skip header
-        TestData = np.asarray([data for data in reader], dtype=np.int16)
-        f.close()
-        print('loaded test data')
-        
-        TestData = np.true_divide(TestData, 255);
-        
-        predict = lr.predict(TestData)
-        
-        # write predictions to csv
-        with open('out/out-sklearn.csv', 'w') as writer:
-            writer.write('"ImageId",Label\n')
-            count = 0
-            for p in predict:
-                count += 1
-                writer.write(str(count) + ',"' + str(p) + '"\n')
+        print("acc: ", acc)
