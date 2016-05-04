@@ -25,4 +25,4 @@ print('Trained classifier')
 
 # predict the test data
 prediction = kNeigh.score(X_test, y_test)
-print('accuracy: ' + prediction)
+print('accuracy: ', prediction)
