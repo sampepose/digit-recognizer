@@ -3,40 +3,28 @@
 import csv
 import numpy as np
 from nearest_neighbor import NearestNeighbor as NearestN
+from sklearn.datasets import fetch_mldata
 
-# Read the training data
-f = open('data/train.csv')
-reader = csv.reader(f)
-next(reader, None) # skip header
-data = [data for data in reader]
-f.close()
-        
-X = np.asarray([x[1:] for x in data], dtype=np.int16)
-y = np.asarray([x[0] for x in data], dtype=np.int16)
-del data # free up the memory
-print('loaded training data')
+mnist = fetch_mldata("MNIST original")
+print('Fetched data')
+
+# use the traditional train/test split
+X, y = mnist.data, mnist.target
+X_train, X_test = X[:60000], X[60000:]
+y_train, y_test = y[:60000], y[60000:]
 
 # Construct k-nearest neighbor classifier and 'fit' it
 nn = NearestN()
-nn.train(X, y)
+nn.train(X_train, y_train)
 
-# Read the test data
-f = open('data/test.csv')
-reader = csv.reader(f)
-next(reader, None) # skip header
-TestData = np.asarray([data for data in reader], dtype=np.int16)
-f.close()
-print('loaded test data')
-        
 # predict the test data
-predict = nn.predict(TestData)
-del TestData # free up the memory
-print('predicted test data')
+predict = nn.predict(X_test)
 
-# write predictions to csv
-with open('data/out-my-nearest-neighbor.csv', 'w') as writer:
-    writer.write('"ImageId", Label\n')
-    count = 0
-    for p in predict:
-        count += 1
-        writer.write(str(count) + ',"' + str(p) + '"\n')
+correct = 0.0
+count = len(y_test)
+accuracy = 0.0
+for i, p in enumerate(predict):
+	if p == y_test[i]
+		correct += 1
+
+print('accuracy:', float(correct) / count)
