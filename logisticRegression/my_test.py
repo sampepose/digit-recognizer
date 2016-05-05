@@ -3,16 +3,24 @@ import numpy as np
 from logistic_regression import LogisticRegression
 from numpy.random import RandomState
 from sklearn.cross_validation import train_test_split
-from sklearn.datasets import fetch_mldata
 
-mnist = fetch_mldata("MNIST original")
-print('Fetched data')
+# Read the training data
+f = open('../data/train.csv')
+reader = csv.reader(f)
+next(reader, None) # skip header
+data = [data for data in reader]
+f.close()
+        
+X = np.asarray([x[1:] for x in data], dtype=np.int16)
+y = np.asarray([x[0] for x in data], dtype=np.int16)
 
-# use the traditional train/test split
-X, y = mnist.data / 255.0, mnist.target
-X_train, X_test = X[:60000], X[60000:]
-y_train, y_test = y[:60000], y[60000:]
+X = np.true_divide(X, 255); # normalize image data to 0-1
 
+del data # free up the memory
+print('loaded training data')
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=RandomState())
+    
 lr = LogisticRegression(C=0.35)
 lr.fit(X_train, y_train, 10)
 guesses = lr.predict(X_test)

@@ -48,7 +48,7 @@ class LogisticRegression:
         X = np.insert(X, 0, 1, axis=1)
 
         M, N = X.shape        
-        
+        print(y.shape)
         # convert labels to (K, M) binary matrix
         self.binary_labels = np.zeros((M, self.K))
         self.binary_labels[range(M), y] = 1.0
